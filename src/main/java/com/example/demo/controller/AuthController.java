@@ -2,10 +2,12 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
+import com.example.demo.payload.JWTAuthResponse;
 import com.example.demo.payload.LoginDto;
 import com.example.demo.payload.SignUpDto;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +21,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.Collections;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth/")
 public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -37,9 +40,12 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
     @PostMapping("/signin")
-    public ResponseEntity<String> signin(
-            @RequestBody LoginDto loginDto
+    public ResponseEntity<JWTAuthResponse> signin(
+            @Valid @RequestBody LoginDto loginDto
     ) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -50,20 +56,24 @@ public class AuthController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return new ResponseEntity<>("User signin successfully!", HttpStatus.OK);
+//        get token from token provider
+        String token = jwtTokenProvider.generateToken(authentication);
+
+//        return new ResponseEntity<>("User signin successfully!", HttpStatus.OK);
+        return ResponseEntity.ok(new JWTAuthResponse(token));
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> RegisterUser (
-            @RequestBody SignUpDto signUpDto
-            ){
+    public ResponseEntity<?> RegisterUser(
+            @Valid @RequestBody SignUpDto signUpDto
+    ) {
 //        check exists username
-        if (userRepository.existsByUsername(signUpDto.getUsername())){
+        if (userRepository.existsByUsername(signUpDto.getUsername())) {
             return new ResponseEntity<>("Username is already taken!", HttpStatus.BAD_REQUEST);
         }
 
         //        check exists email
-        if (userRepository.existsByEmail(signUpDto.getEmail())){
+        if (userRepository.existsByEmail(signUpDto.getEmail())) {
             return new ResponseEntity<>("Email is already taken!", HttpStatus.BAD_REQUEST);
         }
 
