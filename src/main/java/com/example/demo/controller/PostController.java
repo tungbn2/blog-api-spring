@@ -4,6 +4,7 @@ import com.example.demo.payload.PostDto;
 import com.example.demo.payload.PostResponse;
 import com.example.demo.service.PostService;
 import com.example.demo.ultils.AppConstants;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@Api(value = "API for CRUD Posts")
 @RestController
 @RequestMapping("/api/v1/")
 public class PostController {

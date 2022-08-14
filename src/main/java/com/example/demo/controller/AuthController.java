@@ -8,6 +8,8 @@ import com.example.demo.payload.SignUpDto;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtTokenProvider;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,7 @@ import javax.validation.Valid;
 import java.util.Collection;
 import java.util.Collections;
 
+@Api(value = "Authentication API")
 @RestController
 @RequestMapping("/api/v1/auth/")
 public class AuthController {
@@ -43,6 +46,7 @@ public class AuthController {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
+    @ApiOperation(value = "API for login or signin")
     @PostMapping("/signin")
     public ResponseEntity<JWTAuthResponse> signin(
             @Valid @RequestBody LoginDto loginDto
@@ -63,6 +67,7 @@ public class AuthController {
         return ResponseEntity.ok(new JWTAuthResponse(token));
     }
 
+    @ApiOperation(value = "API for register or signup")
     @PostMapping("/signup")
     public ResponseEntity<?> RegisterUser(
             @Valid @RequestBody SignUpDto signUpDto
