@@ -53,6 +53,8 @@ public class SecurityConfigNew {
                 .and()
                 .authorizeRequests((authorize) -> authorize
                         .antMatchers(HttpMethod.GET, "/api/v1/**").permitAll()
+                        .antMatchers(HttpMethod.GET, "/api/v2/**").permitAll()
+                        .antMatchers(HttpMethod.GET, "/api/**").permitAll()
                         .antMatchers("/api/v1/auth/**").permitAll()
                         .antMatchers("/v2/api-docs/**").permitAll()
                         .antMatchers("/swagger-ui/**").permitAll()
